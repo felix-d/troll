@@ -6,3 +6,5 @@ authors = ["Felix Descoteaux <flx.descoteaux@gmail.com>"]
 [dependencies]
 getopts = "0.2"
 slack-hook = "0.2"
+hyper = "0.9.13"
+rustc-serialize = "*"

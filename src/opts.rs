@@ -20,6 +20,11 @@ impl fmt::Display for InvalidArgError {
     }
 }
 
+fn print_usage(opts: Options) {
+    let brief = format!("Usage: ./{} [options]", PROGRAM);
+    print!("{}", opts.usage(&brief));
+}
+
 pub fn parse_args() -> Result<Config, InvalidArgError> {
     let args: Vec<String> = env::args().collect();
 
@@ -47,9 +52,4 @@ pub fn parse_args() -> Result<Config, InvalidArgError> {
     };
 
     Ok(conf)
-}
-
-fn print_usage(opts: Options) {
-    let brief = format!("Usage: ./{} [options]", PROGRAM);
-    print!("{}", opts.usage(&brief));
 }
