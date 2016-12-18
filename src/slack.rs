@@ -114,23 +114,26 @@ impl<'a> SlackAPIClient<'a> {
         Ok(None)
     }
 
-    pub fn user(&self, username: &str) -> Result<User, Error> {
+    fn resolve_users(&self) -> Result<json::Json, Error> {
         let mut cache = self.cache.borrow_mut();
-        let users = match cache.get("users") {
-            Some(users) => users,
+        match cache.get("users") {
+            Some(users) => Ok(users),
             None => {
                 let users = try!(self.users());
                 cache.set("users", &users);
-                users
+                Ok(users)
             },
-        };
+        }
+    }
 
+    pub fn user(&self, username: &str) -> Result<User, Error> {
+        let users = try!(self.resolve_users());
         let user = try!(SlackAPIClient::find_user(username, &users));
         match user {
             Some(user) => Ok(user),
             None => {
                 let users = try!(self.users());
-                cache.set("users", &users);
+                self.cache.borrow_mut().set("users", &users);
                 match try!(SlackAPIClient::find_user(username, &users)) {
                     Some(user) => Ok(user),
                     None => Err(Error::UserNotFound)
@@ -139,23 +142,26 @@ impl<'a> SlackAPIClient<'a> {
         }
     }
 
-    pub fn channel(&self, channel_name: &str) -> Result<Channel, Error> {
+    fn resolve_channels(&self) -> Result<json::Json, Error>{
         let mut cache = self.cache.borrow_mut();
-        let channels = match cache.get("channels") {
-            Some(channels) => channels,
+        match cache.get("channels") {
+            Some(channels) => Ok(channels),
             None => {
                 let channels = try!(self.channels());
                 cache.set("channels", &channels);
-                channels
+                Ok(channels)
             },
-        };
+        }
+    }
 
-        let channel = try!(SlackAPIClient::find_channel(channel_name, &channels));
-        match channel {
+    pub fn channel(&self, channel_name: &str) -> Result<Channel, Error> {
+        let channels = try!(self.resolve_channels());
+
+        match try!(SlackAPIClient::find_channel(channel_name, &channels)) {
             Some(channel) => Ok(channel),
             None => {
                 let channels = try!(self.channels());
-                cache.set("channels", &channels);
+                self.cache.borrow_mut().set("channels", &channels);
                 match try!(SlackAPIClient::find_channel(channel_name, &channels)) {
                     Some(channel) => Ok(channel),
                     None => Err(Error::ChannelNotFound),
