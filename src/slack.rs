@@ -128,7 +128,14 @@ impl<'a> SlackAPIClient<'a> {
         let user = try!(SlackAPIClient::find_user(username, &users));
         match user {
             Some(user) => Ok(user),
-            None => Err(Error::UserNotFound),
+            None => {
+                let users = try!(self.users());
+                cache.set("users", &users);
+                match try!(SlackAPIClient::find_user(username, &users)) {
+                    Some(user) => Ok(user),
+                    None => Err(Error::UserNotFound)
+                }
+            },
         }
     }
 
@@ -146,7 +153,14 @@ impl<'a> SlackAPIClient<'a> {
         let channel = try!(SlackAPIClient::find_channel(channel_name, &channels));
         match channel {
             Some(channel) => Ok(channel),
-            None => Err(Error::ChannelNotFound),
+            None => {
+                let channels = try!(self.channels());
+                cache.set("channels", &channels);
+                match try!(SlackAPIClient::find_channel(channel_name, &channels)) {
+                    Some(channel) => Ok(channel),
+                    None => Err(Error::ChannelNotFound),
+                }
+            },
         }
     }
 }
