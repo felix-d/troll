@@ -9,21 +9,39 @@ mod errors;
 mod cache;
 
 use std::process;
+use std::cell::RefCell;
 
 fn main() {
     let conf = match opts::parse_args() {
         Ok(conf) => conf,
-        Err(e) => {
-            process::exit(1);
-        }
+        Err(_) => process::exit(1),
     };
 
     let slack_client = slack::SlackAPIClient {
         token: &conf.token,
+        cache: RefCell::new(match cache::Cache::new() {
+            Ok(cache) => cache,
+            Err(e) => {
+                println!("{:?}", e);
+                process::exit(1);
+            }
+        }),
     };
 
-    let user = slack_client.user(&conf.username);
-    let channel = slack_client.channel(&conf.channel_name);
+    let channel = match slack_client.channel(&conf.channel_name) {
+        Ok(channel) => channel,
+        Err(_) => {
+            println!("Channel could not be found.");
+            process::exit(1);
+        },
+    };
 
-    println!("{}", conf.token);
+    let user = match slack_client.user(&conf.username) {
+        Ok(user) => user,
+        Err(_) => {
+            println!("User could not be found.");
+            process::exit(1);
+        },
+    };
+    slack_client.post_message(&user, &channel, &conf.message);
 }

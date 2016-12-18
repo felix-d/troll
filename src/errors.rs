@@ -21,15 +21,19 @@ impl From<io::Error> for Error {
     }
 }
 
+#[derive(Debug)]
 pub enum Error {
     Hyper(hyper::Error),
     Parser(json::ParserError),
     Io(io::Error),
+    UnexpectedJson,
     NoResult,
     NoChannels,
     NoMembers,
     UserNotFound,
+    CacheKeyDoesNotExist,
     ChannelNotFound,
     CantReadCache,
     CantWriteCache,
+    CantConvertJsonToObj,
 }
