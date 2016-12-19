@@ -83,9 +83,12 @@ impl<'a> SlackAPIClient<'a> {
         let id_json = try!(user.find("id").ok_or(Error::UnexpectedJson));
         let id = try!(picture_url_json.as_string().ok_or(Error::UnexpectedJson));
 
+        let realname_json = try!(user.find("real_name").ok_or(Error::UnexpectedJson));
+        let realname = try!(realname_json.as_string().ok_or(Error::UnexpectedJson));
+
         Ok(User {
             id: id.to_string(),
-            username: username.to_string(),
+            username: realname.to_string(),
             picture_url: picture_url.to_string(),
         })
     }
