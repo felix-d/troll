@@ -1,4 +1,4 @@
-# Troll - Troll your colleagues in Slack
+# Troll - Troll your co-workers in Slack
 
 This script let you post as a bot in Slack under the identity of any user in a
 given channel. It fetches and caches the list of users, get the user id corresponding to
