@@ -128,8 +128,8 @@ impl<'a> SlackAPIClient<'a> {
 
     pub fn user(&self, username: &str) -> Result<User, Error> {
         let users = try!(self.resolve_users());
-        let user = try!(SlackAPIClient::find_user(username, &users));
-        match user {
+
+        match try!(SlackAPIClient::find_user(username, &users)) {
             Some(user) => Ok(user),
             None => {
                 let users = try!(self.users());
