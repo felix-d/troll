@@ -19,7 +19,7 @@ fn main() {
 
     let slack_client = slack::SlackAPIClient {
         token: &conf.token,
-        use_real_name: conf.use_real_name,
+        use_real_name: &conf.use_real_name,
         image: &conf.image,
         cache: RefCell::new(match cache::Cache::new() {
             Ok(cache) => cache,

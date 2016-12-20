@@ -1,9 +1,11 @@
-use rustc_serialize::json;
 use std::collections::BTreeMap;
 use std::cell::RefCell;
+
+use rustc_serialize::json;
+
+use errors::Error;
 use utils;
 use cache;
-use errors::Error;
 
 
 const SLACK_API_BASE_URL: &'static str = "https://slack.com/api/{endpoint}?token={token}";
@@ -11,9 +13,9 @@ const SLACK_API_BASE_URL: &'static str = "https://slack.com/api/{endpoint}?token
 
 pub struct SlackAPIClient<'a> {
     pub token: &'a str,
-    pub cache: RefCell<cache::Cache>,
-    pub use_real_name: bool,
     pub image: &'a str,
+    pub cache: RefCell<cache::Cache>,
+    pub use_real_name: &'a bool,
 }
 
 pub struct User {
@@ -74,7 +76,7 @@ impl<'a> SlackAPIClient<'a> {
         let picture_url_json = try!(user.find_path(&["profile", "image_72"]).ok_or(Error::UnexpectedJson));
         let picture_url = try!(picture_url_json.as_string().ok_or(Error::UnexpectedJson));
 
-        let name = match self.use_real_name {
+        let name = match *self.use_real_name {
             true => {
                 let real_name_json = try!(user.find("real_name").ok_or(Error::UnexpectedJson));
                 try!(real_name_json.as_string().ok_or(Error::UnexpectedJson)).to_string()
