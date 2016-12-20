@@ -13,7 +13,7 @@ pub struct SlackAPIClient<'a> {
     pub token: &'a str,
     pub cache: RefCell<cache::Cache>,
     pub use_real_name: bool,
-    pub image: String,
+    pub image: &'a str,
 }
 
 pub struct User {
@@ -119,7 +119,7 @@ impl<'a> SlackAPIClient<'a> {
     fn fake_user(&self, username: &str) -> User {
         User {
             username: username.to_string(),
-            picture_url: self.image.clone(),
+            picture_url: self.image.to_string(),
         }
     }
 
