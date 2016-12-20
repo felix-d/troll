@@ -28,12 +28,7 @@ pub enum Error {
     Io(io::Error),
     UnexpectedJson,
     NoResult,
-    NoChannels,
     NoMembers,
     UserNotFound,
-    CacheKeyDoesNotExist,
-    ChannelNotFound,
-    CantReadCache,
-    CantWriteCache,
     CantConvertJsonToObj,
 }

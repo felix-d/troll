@@ -8,9 +8,6 @@ use utils;
 use cache;
 
 
-const SLACK_API_BASE_URL: &'static str = "https://slack.com/api/{endpoint}?token={token}";
-
-
 pub struct SlackAPIClient<'a> {
     pub token: &'a str,
     pub image: &'a str,
