@@ -30,6 +30,7 @@ fn main() {
         }),
     };
 
+
     let channel = slack_client.channel(&conf.channel_name);
 
     let user = match slack_client.user(&conf.username) {

@@ -59,7 +59,7 @@ pub fn parse_args() -> Result<Config, InvalidArgError> {
         channel_name: try!(matches.opt_str("c").ok_or(InvalidArgError)),
         username: try!(matches.opt_str("u").ok_or(InvalidArgError)),
         message: try!(matches.opt_str("m").ok_or(InvalidArgError)),
-        image: try!(matches.opt_str("f").ok_or(InvalidArgError)),
+        image: matches.opt_str("f").unwrap_or("".to_string()),
         use_real_name: matches.opt_present("r"),
     };
 
