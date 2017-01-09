@@ -12,10 +12,7 @@ use std::process;
 use std::cell::RefCell;
 
 fn main() {
-    let conf = match opts::parse_args() {
-        Ok(conf) => conf,
-        Err(_) => process::exit(1),
-    };
+    let conf = opts::parse_args().unwrap();
 
     let slack_client = slack::SlackAPIClient {
         token: &conf.token,

@@ -40,10 +40,7 @@ impl Cache {
     }
 
     pub fn get(&mut self, key: &str) -> Option<json::Json> {
-        match self.content.get(key) {
-            Some(x) => Some(x.clone()),
-            None => None,
-        }
+        self.content.get(key).map(|x| x.clone())
     }
 
     pub fn set(&mut self, key: &str, json: &json::Json) -> Result<(), Error> {

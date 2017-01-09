@@ -1,6 +1,6 @@
 use std::env;
 use getopts::{Options};
-use std::fmt;
+use errors::Error;
 
 
 const PROGRAM: &'static str = "troll";
@@ -14,20 +14,12 @@ pub struct Config {
     pub use_real_name: bool,
 }
 
-pub struct InvalidArgError;
-
-impl fmt::Display for InvalidArgError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Invalid argument.")
-    }
-}
-
 fn print_usage(opts: Options) {
     let brief = format!("Usage: ./{} [options]", PROGRAM);
     print!("{}", opts.usage(&brief));
 }
 
-pub fn parse_args() -> Result<Config, InvalidArgError> {
+pub fn parse_args() -> Result<Config, Error> {
     let args: Vec<String> = env::args().collect();
 
     let mut opts = Options::new();
@@ -40,25 +32,18 @@ pub fn parse_args() -> Result<Config, InvalidArgError> {
     opts.optopt("f", "fake-user-image", "Use a fake user and an arbitrary image", "IMAGE HREF");
     opts.optflag("h", "help", "Print this help menu.");
 
-
-    let matches = match opts.parse(&args[1..]) {
-        Ok(m) => m,
-        Err(_) => {
-            print_usage(opts);
-            return Err(InvalidArgError);
-        }
-    };
+    let matches = try!(opts.parse(&args[1..]).or(Err(Error::InvalidArgError)));
 
     if matches.opt_present("h") {
         print_usage(opts);
-        return Err(InvalidArgError);
+        return Err(Error::HelpMenuRequested);
     }
 
     let conf = Config {
-        token: try!(matches.opt_str("t").ok_or(InvalidArgError)),
-        channel_name: try!(matches.opt_str("c").ok_or(InvalidArgError)),
-        username: try!(matches.opt_str("u").ok_or(InvalidArgError)),
-        message: try!(matches.opt_str("m").ok_or(InvalidArgError)),
+        token: try!(matches.opt_str("t").ok_or(Error::InvalidArgError)),
+        channel_name: try!(matches.opt_str("c").ok_or(Error::InvalidArgError)),
+        username: try!(matches.opt_str("u").ok_or(Error::InvalidArgError)),
+        message: try!(matches.opt_str("m").ok_or(Error::InvalidArgError)),
         image: matches.opt_str("f").unwrap_or("".to_string()),
         use_real_name: matches.opt_present("r"),
     };

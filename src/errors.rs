@@ -1,6 +1,7 @@
 use hyper;
 use std::io;
 use rustc_serialize::json;
+use std::fmt;
 
 
 impl From<hyper::Error> for Error {
@@ -30,5 +31,7 @@ pub enum Error {
     NoResult,
     NoMembers,
     UserNotFound,
+    InvalidArgError,
+    HelpMenuRequested,
     CantConvertJsonToObj,
 }

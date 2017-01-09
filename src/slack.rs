@@ -62,8 +62,6 @@ impl<'a> SlackAPIClient<'a> {
             if username == name_from_json {
                 let user = try!(self.build_user_from_json(&user, username));
                 return Ok(Some(user));
-            } else {
-                continue;
             }
         }
         Ok(None)
